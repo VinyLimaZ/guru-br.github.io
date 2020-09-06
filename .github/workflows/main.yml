@@ -1,0 +1,31 @@
+name: CI
+on:
+  push:
+    branches: [ staging ]
+  pull_request:
+    branches: [ staging ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Ruby, JRuby and TruffleRuby
+        uses: ruby/setup-ruby@v1.45.0
+
+      - name: Yarn CLI
+        uses: CultureHQ/actions-yarn@v1.0.1
+
+      - name: bundle install
+        run: bundle install
+
+      - name: Install JS Libs
+        run: yarn install --check-files
+
+      - uses: helaili/jekyll-action@2.0.1
+        env:
+          JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
+        with:
+          target_branch: 'master'
